@@ -160,6 +160,27 @@ end
 function hexagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
   n = max(length(xs), length(ys), length(rs))
 
+  polys = Vector{Vector{Tuple{Compose.Measure, Compose.Measure}}}(n)
+  for i in 1:n
+    x = Compose.x_measure(xs[mod1(i, length(xs))])
+    y = Compose.y_measure(ys[mod1(i, length(ys))])
+    r = rs[mod1(i, length(rs))]
+    u = 0.6r
+
+    polys[i] = Tuple{Compose.Measure, Compose.Measure}[
+      (x-r, y-u), (x-r, y+u), # L edge
+      (x, y+r),               # B
+      (x+r, y+u), (x+r, y-u), # R edge
+      (x, y-r)                # T
+    ]
+  end
+
+  return Gadfly.polygon(polys)
+end
+
+function octagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
+  n = max(length(xs), length(ys), length(rs))
+
   polys = Vector{Vector{Tuple{Measure, Measure}}}(n)
   for i in 1:n
     x = x_measure(xs[mod1(i, length(xs))])
@@ -167,7 +188,6 @@ function hexagon(xs::AbstractArray, ys::AbstractArray, rs::AbstractArray)
     r = rs[mod1(i, length(rs))]
     u = 0.4r
 
-    # make a "plus sign"
     polys[i] = Tuple{Measure, Measure}[
       (x-r, y-u), (x-r, y+u), # L edge
       (x-u, y+r), (x+u, y+r), # B edge
